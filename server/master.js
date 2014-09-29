@@ -59,6 +59,7 @@ function getConf(){
 	// 		min_connect_num = c_num;
 	// 	}
 	// }
+	// 由master临时管理slave上长连接数，再由slave的心跳数据不断修正（尽量保证平均分配）
 	for(var i in client_stack){
 		var n = client_stack[i].n;
 		if(min_connect_num == null || n < min_connect_num){
