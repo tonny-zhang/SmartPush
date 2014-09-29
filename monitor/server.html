@@ -1,0 +1,70 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<style>
+		#result{
+			width: 100%;
+			max-width: 900px;
+			margin: 0 auto;
+		}
+		#result table{
+			background-color: #ccc;
+			width: 100%;
+		}
+		#result .title td{
+			background-color: #eee;
+		}
+		#result table td{
+			background-color: white;
+			margin: 1px;
+		}
+		.error{
+			color: red;
+			text-align: center;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="result">正在加载。。。</div>
+		<script type="text/javascript" src="http://i.tq121.com.cn/j/jquery-1.8.2.js"></script>
+		<script type="text/javascript">
+		!function(){
+			function formatNum(num){
+				return num < 10?'0'+num:num;
+			}
+			function getDate(last_time){
+				var date = new Date(last_time);
+				return date.getFullYear()+'-'+formatNum(date.getMonth()+1)+'-'+formatNum(date.getDate())+' '+formatNum(date.getHours())+':'+formatNum(date.getMinutes())+':'+formatNum(date.getSeconds());
+			}
+			function getHtml(totalNum,contentHtml){
+				var html = '<table>';
+				html += '<tr class="title"><td>IP:端口</td><td>客户端数('+totalNum+')</td><td>总内存</td><td>剩余内存</td><td>最后心跳时间</td></tr>';
+				html += contentHtml;
+				html += '</table>';
+				$('#result').html(html);
+				setTimeout(ping,1000);
+			}
+			function ping(){
+				$.getJSON('http://10.14.85.116:4000/status',function(data){
+					var totalNum = 0;
+					var contentHtml = '';
+					if(data.length > 0){
+						$.each(data,function(i,v){
+							var packet = v.packet || {c_num: 0,mem_t: 0,mem_f: 0};
+							totalNum += packet.c_num;
+							contentHtml += '<tr><td>'+v.host+':'+v.port+'</td><td>'+packet.c_num+'</td><td>'+packet.mem_t+'</td><td>'+packet.mem_f+'</td><td>'+getDate(v.last_time)+'</td></tr>';
+						});
+					}else{
+						contentHtml = '<tr><td colspan=5><div class="error">暂时没有slave服务器</div></td></tr>';
+					}
+					getHtml(totalNum,contentHtml);
+					
+				}).fail(function(){
+					getHtml(0,'<tr><td colspan=5><div class="error">服务器异常</div></td></tr>');
+				})
+			}
+			ping();
+		}();
+		</script>
+	</body>
+</html>

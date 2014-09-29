@@ -1,0 +1,7 @@
+{
+	"REGIST": 0,
+	"PING": 1,
+	"PUSH": 2,
+	"RESULT_OK": 3,
+	"CLOSE": 4
+}
