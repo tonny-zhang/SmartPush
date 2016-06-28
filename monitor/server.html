@@ -45,22 +45,27 @@
 				setTimeout(ping,1000);
 			}
 			function ping(){
-				$.getJSON('http://10.14.85.116:4000/status',function(data){
-					var totalNum = 0;
-					var contentHtml = '';
-					if(data.length > 0){
-						$.each(data,function(i,v){
-							var packet = v.packet || {c_num: 0,mem_t: 0,mem_f: 0};
-							totalNum += packet.c_num;
-							contentHtml += '<tr><td>'+v.host+':'+v.port+'</td><td>'+packet.c_num+'</td><td>'+packet.mem_t+'</td><td>'+packet.mem_f+'</td><td>'+getDate(v.last_time)+'</td></tr>';
-						});
-					}else{
-						contentHtml = '<tr><td colspan=5><div class="error">暂时没有slave服务器</div></td></tr>';
+				$.ajax({
+					url: 'http://10.14.85.116:4000/status',
+					dataType: 'jsonp',
+					jsonp: 'cb',
+					success: function(data){
+						var totalNum = 0;
+						var contentHtml = '';
+						if(data.length > 0){
+							$.each(data,function(i,v){
+								var packet = v.packet || {c_num: 0,mem_t: 0,mem_f: 0};
+								totalNum += packet.c_num;
+								contentHtml += '<tr><td>'+v.host+':'+v.port+'</td><td>'+packet.c_num+'</td><td>'+packet.mem_t+'</td><td>'+packet.mem_f+'</td><td>'+getDate(v.last_time)+'</td></tr>';
+							});
+						}else{
+							contentHtml = '<tr><td colspan=5><div class="error">暂时没有slave服务器</div></td></tr>';
+						}
+						getHtml(totalNum,contentHtml);
+					},
+					error: function(){
+						getHtml(0,'<tr><td colspan=5><div class="error">服务器异常</div></td></tr>');
 					}
-					getHtml(totalNum,contentHtml);
-					
-				}).fail(function(){
-					getHtml(0,'<tr><td colspan=5><div class="error">服务器异常</div></td></tr>');
 				})
 			}
 			ping();

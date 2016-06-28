@@ -78,9 +78,14 @@ function allotMsg(msg){
 	manager_connect.sendMsgToClient(msg);
 	return JSON.stringify({"code":"OK"});
 }
-function response(res,msg){
+function response(req, res,msg){
 	if(!msg){
 		res.writeHead(500);
+	}
+	var info = url.parse(req.url, true);
+	var cb_name = info.query.cb;
+	if (cb_name) {
+		msg = cb_name + '('+msg+')';
 	}
 	res.end(msg);
 }
@@ -113,12 +118,12 @@ http.createServer(function(req, res){
 	if(method == 'get'){
 		if(pathname == '/getconf'){
 			result = getConf();
-			response(res,result);
+			response(req, res,result);
 		}else if(pathname == '/status'){
 			result = status(true);
-			return response(res,result);
+			return response(req, res,result);
 		}
-		return response(res);	
+		return response(req, res);	
 	}else if(method == 'post' && pathname == '/msg'){
 		req.on('data',function(d){
 			request_data += d;
@@ -130,7 +135,7 @@ http.createServer(function(req, res){
 			if(param && param.msg){
 				result = allotMsg(param.msg);
 			}
-			return response(res,result);
+			return response(req, res, result);
 		});
 	}
 	
