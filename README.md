@@ -15,11 +15,11 @@
 
 -------------
 # 测试
-1. node server/master
-1. node server/slave 3001  //启动一个slave
-1. node server/slave 3002  //启动第二个slave
-1. node server/test/client/client // 模拟多个客户端
-1. node server/test/client/post_msg //模板向客户端发送数据
+1. `node server/master`
+1. `node server/slave 3001`  //启动一个slave
+1. `node server/slave 3002`  //启动第二个slave
+1. `node server/test/client/client` // 模拟多个客户端
+1. `node server/test/client/post_msg` //模板向客户端发送数据
 
 ## 服务器状态查看
-monitor/server.html
+`monitor/server.html`
